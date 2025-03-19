@@ -30,4 +30,3 @@ cv2.imshow("edges", edges)
 cv2.waitKey(0)
 cv2.destroyAllWindows() # 모든 창 닫기
 cv2.waitKey(1)
-print(1)
