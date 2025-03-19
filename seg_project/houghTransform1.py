@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 
-# 바둑판 영상 불러오기
 image = cv2.imread("./projectData/segmentation_results/26309_000_OK_otsu.png")
 # 원본 영상을 복사
 image2 = image.copy()
