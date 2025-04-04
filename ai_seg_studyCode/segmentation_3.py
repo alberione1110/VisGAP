@@ -7,8 +7,6 @@ img = cv2.imread('./projectData/normal/26939_000_OK.jpeg',0)
 
 ret, th1 = cv2.threshold(img,127,255,cv2.THRESH_BINARY)
 
-
-
 th2 = cv2.adaptiveThreshold(img,255,cv2.ADAPTIVE_THRESH_MEAN_C,\
 cv2.THRESH_BINARY,15,2)
 th3 = cv2.adaptiveThreshold(img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
