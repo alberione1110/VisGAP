@@ -16,6 +16,7 @@ async def process_images(files: List[UploadFile] = File(...)):
     # [✅] 메모리 버퍼를 이미지로 변환
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_GRAYSCALE)
+    blur = cv2.GaussianBlur(img,(5,5),0)
 
     # [✅] 이진화 처리
     ret1, th1 = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
