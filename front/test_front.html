@@ -22,9 +22,14 @@
       const response = await fetch('http://localhost:8000/upload', {
         method: 'POST',
         body: formData
-      });
-      const data = await response.json();
-      document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+    });
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+
+    const img = document.createElement('img');
+    img.src = url;
+    document.getElementById('result').appendChild(img);
     });
   </script>
 </body>

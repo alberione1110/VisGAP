@@ -1,24 +1,23 @@
 # backend/main.py
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 import requests
+import io
 from typing import List
 
 app = FastAPI()
 
-# [✅] CORS 허용 설정
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 프론트 주소만 제한할 수도 있지만, 개발 단계에선 * (모두 허용)
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# AI 서버 주소
 AI_SERVER_URL = "http://localhost:8001/process-images"
 
-# 파일 업로드 엔드포인트
 @app.post("/upload")
 async def upload_images(files: List[UploadFile] = File(...)):
     ai_files = []
@@ -27,4 +26,6 @@ async def upload_images(files: List[UploadFile] = File(...)):
         ai_files.append(('files', (file.filename, content, file.content_type)))
 
     response = requests.post(AI_SERVER_URL, files=ai_files)
-    return response.json()
+
+    # ✨ 받은 이미지를 프론트로 그대로 전달
+    return StreamingResponse(io.BytesIO(response.content), media_type="image/jpeg")
