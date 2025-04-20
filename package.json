@@ -1,0 +1,20 @@
+{
+  "name": "visionstudy",
+  "version": "1.0.0",
+  "description": "test\r 테스트입니다.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alberione1110/VisGAP.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alberione1110/VisGAP/issues"
+  },
+  "homepage": "https://github.com/alberione1110/VisGAP#readme"
+}
