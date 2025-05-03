@@ -11,7 +11,7 @@ _, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
 # 컨투어 검출
 contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-# 가장 큰 사각형 찾기 (y<500 제한 포함)
+# 가장 큰 사각형 찾기 (y < 500 제한)
 max_area = 0
 best_rect = None
 
@@ -25,31 +25,42 @@ for cnt in contours:
 color_img = img.copy()
 
 if best_rect:
+    # 초록 네모 (마그네틱)
     x, y, w, h = best_rect
-    cv2.rectangle(color_img, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
-    # 중심 좌표
+    # 빨간 네모 (확장된 3.5:1 사각형)
     center_x = x + w // 2
     center_y = y + h // 2
+    red_w = w
+    red_h = int(w / 3.5)
+    red_x = int(center_x - red_w // 2)
+    red_y = int(center_y - red_h // 2)
 
-    # 새로 만들 crop 영역 (2:1 비율)
-    new_w = w
-    new_h = w // 3.5
+    red_x = max(0, min(red_x, img.shape[1] - red_w))
+    red_y = max(0, min(red_y, img.shape[0] - red_h))
 
-    # crop 좌표 계산
-    new_x = max(center_x - new_w // 2, 0)
-    new_y = max(center_y - new_h // 2, 0)
+    # 파란 네모 1 (위쪽 GAP)
+    top1 = min(y, red_y)
+    bottom1 = max(y, red_y)
+    cv2.rectangle(color_img, (red_x, top1), (red_x + red_w, bottom1), (255, 0, 0), 2)
+    gap1_px = bottom1 - top1
 
-    # crop 영역이 이미지 넘어가지 않게 조정
-    new_x = min(new_x, img.shape[1] - new_w)
-    new_y = min(new_y, img.shape[0] - new_h)
+    # 파란 네모 2 (아래쪽 GAP)
+    green_bottom = y + h
+    red_bottom = red_y + red_h
+    top2 = min(green_bottom, red_bottom)
+    bottom2 = max(green_bottom, red_bottom)
+    cv2.rectangle(color_img, (red_x, top2), (red_x + red_w, bottom2), (255, 0, 0), 2)
+    gap2_px = bottom2 - top2
 
-    # 최종 crop
-    cropped = img[int(new_y):int(new_y+new_h), int(new_x):int(new_x+new_w)]
+    # 텍스트 출력 (픽셀 단위)
+    cv2.putText(color_img, f"{gap1_px} px", (red_x + 5, top1 + 20),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+    cv2.putText(color_img, f"{gap2_px} px", (red_x + 5, top2 + 20),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
     # 결과 출력
-    cv2.imshow('Biggest Rectangle (full image)', color_img)
-    cv2.imshow('Cropped 2:1 Rectangle', cropped)
+    cv2.imshow('GAP Measurement (Pixel)', color_img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 else:
