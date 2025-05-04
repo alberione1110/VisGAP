@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 3
+names: ['frame', 'gap', 'magnetic']
+
+roboflow:
+  workspace: visgap
+  project: my-first-project-dk9wo
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/visgap/my-first-project-dk9wo/dataset/1
