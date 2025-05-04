@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 # detection 모델 로드
-model = YOLO("runs/detect/train11/weights/best.pt")
+model = YOLO("runs/detect/train63/weights/best.pt")
 
 # 예측 수행
 results = model.predict(source="./projectData/normal/27203_000_OK.jpeg", conf=0.25, save=False, show=False)

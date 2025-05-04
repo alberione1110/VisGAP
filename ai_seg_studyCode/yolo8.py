@@ -3,13 +3,13 @@ from ultralytics import YOLO
 import numpy as np
 
 # 모델 로드
-model = YOLO("runs/detect/train11/weights/best.pt")
+model = YOLO("runs/detect/train63/weights/best.pt")
 
 # 클래스 이름 리스트 가져오기
 class_names = model.names  # 예: {0: 'gap', 1: 'frame', 2: 'magnetic'}
 
 # 추론
-results = model.predict(source="./projectData/normal/27203_000_OK.jpeg", save=False, conf=0.1, iou=0.3)
+results = model.predict(source="./projectData/normal/26363_000_OK.jpeg", save=False, conf=0.1, iou=0.3)
 
 # 결과 처리
 for result in results:
