@@ -9,7 +9,7 @@ model = YOLO("runs/detect/train63/weights/best.pt")
 class_names = model.names  # 예: {0: 'gap', 1: 'frame', 2: 'magnetic'}
 
 # 추론
-results = model.predict(source="./projectData/normal/26363_000_OK.jpeg", save=False, conf=0.1, iou=0.3)
+results = model.predict(source="./projectData/normal/26309_000_OK.jpeg", save=False, conf=0.1, iou=0.3)
 
 # 결과 처리
 for result in results:
@@ -23,14 +23,15 @@ for result in results:
             continue  # gap이 아니면 스킵
 
         xyxy = box.xyxy[0].cpu().numpy().astype(int)
-        conf = box.conf[0].item()
+        x1, y1, x2, y2 = xyxy
+        height = y2 - y1  # GAP의 높이 (세로 픽셀 길이)
 
-        # 박스 그리기
-        cv2.rectangle(img, (xyxy[0], xyxy[1]), (xyxy[2], xyxy[3]), (0, 255, 0), 2)
-        cv2.putText(img, f"{cls_name} {conf:.2f}", (xyxy[0], xyxy[1] - 5),
+        # 바운딩 박스 및 GAP 높이 출력
+        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        cv2.putText(img, f"{height}px", (x1, y1 - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
     # 결과 띄우기
-    cv2.imshow("Only GAP", img)
+    cv2.imshow("GAP Height in Pixels", img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
