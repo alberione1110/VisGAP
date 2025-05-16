@@ -1,0 +1,55 @@
+.explainContainer {
+  padding: 20px;
+}
+
+.splitContainer {
+  display: flex;
+  align-items: stretch;
+}
+
+.left, .right {
+  flex: 1;
+}
+
+/* 가운데 구분선 */
+.divider {
+  width: 1px;
+  background-color: #ccc;
+  margin: 0 20px;
+  align-self: stretch;
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section h3 {
+  margin-bottom: 16px;
+}
+
+.sectionImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.segExampleWrapper {
+  margin-bottom: 16px;
+}
+
+.smallExampleWrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.smallExampleImage {
+  width: 300px;
+  height: auto;
+  margin-right: 8px;
+}
+
+.smallExampleCaption {
+  font-size: 14px;
+}
