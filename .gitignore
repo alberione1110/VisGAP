@@ -1,0 +1,48 @@
+# 운영체제 및 일반 무시 파일
+.DS_Store
+__pycache__
+
+# 프로젝트 루트에서 상위 경로 관련 제외(필요시 유지)
+../../HELP.md
+../../../.gradle
+
+# 빌드 관련 폴더 (backend/gradle 관련 예외 포함)
+build/
+!backend/gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# STS (Spring Tool Suite) IDE 관련 파일들
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# 컴파일 출력 폴더 무시
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# IntelliJ IDEA 관련 설정 파일 및 폴더 무시
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# IntelliJ 빌드 출력 폴더 무시
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# NetBeans IDE 관련 무시
+/nbproject/private/
+	nbbuild/
+	dist/
+	nbdist/
+	.nb-gradle/
+
+# VS Code 설정 폴더 무시
+.vscode/
