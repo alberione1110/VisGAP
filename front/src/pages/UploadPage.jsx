@@ -1,4 +1,4 @@
-// File: src/pages/UploadPage.jsx
+// src/pages/UploadPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './UploadPage.module.css';
@@ -7,6 +7,7 @@ export default function UploadPage() {
   const [files, setFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -63,6 +64,11 @@ export default function UploadPage() {
       // 단일 업로드 응답 처리 (JSON)
       if (contentType.includes('application/json')) {
         const data = await res.json();
+
+        // ✅ 단일 이미지 다운로드 처리
+        handleDownload(data.segmentation_url, 'segmentation_result.png');
+        handleDownload(data.gap_url, 'gap_result.png');
+
         navigate('/result', {
           state: {
             type: 'single',
@@ -108,6 +114,15 @@ export default function UploadPage() {
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
   }, [location]);
+
+  // ✅ 다운로드 함수: 자동으로 다운로드 실행
+  const handleDownload = (url, filename) => {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename; // 파일명 지정
+    a.click();
+    a.remove();
+  };
 
   return (
     <div className={styles.uploadContainer}>
