@@ -1,4 +1,4 @@
-// src/pages/UploadPage.jsx
+// File: src/pages/UploadPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './UploadPage.module.css';
@@ -43,18 +43,24 @@ export default function UploadPage() {
       alert('파일을 먼저 선택해주세요!');
       return;
     }
-// 📦 FormData 생성 및 이미지 파일들 담기
+    // FormData 생성 및 이미지 파일들 담기
     const formData = new FormData();
-    files.forEach(file => formData.append('images', file)); // 백엔드에서 'images' 키로 받아야 함
+    files.forEach((file) => formData.append('images', file));
 
-    try { // 📡 백엔드로 POST 요청 전송 (Flask/FastAPI 등에서 /analyze 엔드포인트 필요)
-      const res = await fetch('http://localhost:5000/analyze', {
+    // 단일 / 다중 업로드 URL 분기
+    const endpoint =
+      files.length === 1
+        ? 'http://localhost:8080/api/upload'
+        : 'http://localhost:8080/api/upload-multiple';
+
+    try {
+      const res = await fetch(endpoint, {
         method: 'POST',
         body: formData,
       });
 
       const contentType = res.headers.get('Content-Type') || '';
-// 📥 단일 이미지 처리: JSON으로 응답되면 segmentation/gap 결과 표시
+      // 단일 업로드 응답 처리 (JSON)
       if (contentType.includes('application/json')) {
         const data = await res.json();
         navigate('/result', {
@@ -66,8 +72,9 @@ export default function UploadPage() {
             time: data.time,
           },
         });
-            // 📥 다중 이미지 처리: ZIP 응답 → 자동 다운로드 → 결과 페이지로 이동
-      } else if (contentType.includes('application/zip')) {
+      }
+      // 다중 업로드 응답 처리 (ZIP)
+      else if (contentType.includes('application/zip')) {
         const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -117,11 +124,11 @@ export default function UploadPage() {
         onDragLeave={handleDragLeave}
       >
         {previewUrls.length > 0 ? (
-          <div className={`${styles.previewWrapper} ${styles['count' + previewUrls.length]}`}>
+          <div className={`${styles.previewWrapper} ${styles[`count${previewUrls.length}`]}`}>
             {previewUrls.map((url, idx) => (
               <img key={idx} src={url} alt={`preview-${idx}`} className={styles.previewImage} />
-          ))}
-</div>
+            ))}
+          </div>
         ) : (
           <p className={styles.placeholder}>원하는 파일을<br />드래그해서 넣어주세요</p>
         )}
@@ -142,7 +149,6 @@ export default function UploadPage() {
       </div>
 
       <button className={styles.submitButton} onClick={handleSubmit}>측정하기</button>
-
     </div>
   );
 }
