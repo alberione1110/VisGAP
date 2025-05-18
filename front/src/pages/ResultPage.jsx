@@ -27,7 +27,15 @@ export default function ResultPage() {
             {gapUrl && <img src={gapUrl} alt="gap 결과 이미지" />}
           </div>
           <div className={styles.imageBoxSmall}>
-            {gapValue !== undefined && <p>GAP: {gapValue} px</p>}
+            {gapValue !== undefined && (
+              <div>
+                {Array.isArray(gapValue)
+                  ? gapValue.map((val, idx) => (
+                      <p key={idx}>GAP {idx + 1}: {val}px</p>
+                    ))
+                  : <p>GAP: {gapValue} px</p>}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -36,12 +44,12 @@ export default function ResultPage() {
         소요 시간: {time}s
       </p>
 
-     {type === 'multiple' && (
-  <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-    <p>여러 이미지의 결과는 zip 파일로 자동 다운로드되었습니다.</p>
-    {time && <p>소요 시간: {time}s</p>}
-  </div>
-)}
+      {type === 'multiple' && (
+        <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+          <p>여러 이미지의 결과는 zip 파일로 자동 다운로드되었습니다.</p>
+          {time && <p>소요 시간: {time}s</p>}
+        </div>
+      )}
     </div>
   );
 }
