@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './UploadPage.module.css';
 
-const API_BASE = 'http://localhost:8080'; // uvicorn 포트
+const API_BASE = 'http://localhost:8080';
 
 export default function UploadPage() {
   const [files, setFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [result, setResult] = useState(null);
+  const navigate = useNavigate();
 
   const handleFileChange = e => {
     const imgs = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
     if (!imgs.length) return alert('이미지 파일만 업로드 가능합니다!');
     setFiles(imgs);
     setPreviewUrls(imgs.map(f => URL.createObjectURL(f)));
-    setResult(null);
   };
 
   const handleDrop = e => {
@@ -24,13 +24,11 @@ export default function UploadPage() {
     if (!imgs.length) return alert('이미지 파일만 업로드 가능합니다!');
     setFiles(imgs);
     setPreviewUrls(imgs.map(f => URL.createObjectURL(f)));
-    setResult(null);
   };
 
   const handleReset = () => {
     setFiles([]);
     setPreviewUrls([]);
-    setResult(null);
     setIsDragging(false);
   };
 
@@ -39,9 +37,9 @@ export default function UploadPage() {
 
     const formData = new FormData();
     if (files.length === 1) {
-      formData.append('file', files[0]);       // 단일 업로드 키: file
+      formData.append('file', files[0]);
     } else {
-      files.forEach(f => formData.append('files', f)); // 다중 업로드 키: files
+      files.forEach(f => formData.append('files', f));
     }
 
     const endpoint = files.length === 1
@@ -50,28 +48,30 @@ export default function UploadPage() {
 
     try {
       const res = await fetch(endpoint, { method: 'POST', body: formData });
-      const ct  = res.headers.get('Content-Type') || '';
+      const ct = res.headers.get('Content-Type') || '';
 
       if (ct.includes('application/json')) {
         const data = await res.json();
-        setResult({
-          segUrl:  data.segmentationUrl,
-          gapUrl:  data.gapUrl,
-          gapValue: data.gapValue,
-          time:    data.time
+        navigate('/result', {
+          state: {
+            segUrl: data.segmentationUrl,
+            gapUrl: data.gapUrl,
+            gapValue: data.gapValue,
+            time: data.time
+          }
         });
-      }
-      else if (ct.includes('application/zip')) {
+      } else if (ct.includes('application/zip')) {
+        const processingTime = res.headers.get('X-Processing-Time');
         const blob = await res.blob();
-        const url  = URL.createObjectURL(blob);
-        const a    = document.createElement('a');
-        a.href     = url;
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
         a.download = 'results.zip';
         a.click();
         URL.revokeObjectURL(url);
-        alert('결과 ZIP 파일이 다운로드되었습니다.');
-      }
-      else {
+        alert(`결과 ZIP 파일이 다운로드되었습니다.\n소요 시간: ${processingTime}s`);
+      } else {
         throw new Error('알 수 없는 응답 타입입니다.');
       }
     } catch (err) {
@@ -83,7 +83,7 @@ export default function UploadPage() {
   return (
     <div className={styles.uploadContainer}>
       <h2 className={styles.title}>
-        세그멘테이션 및 <span className={styles.gap}>GAP</span> 측정을 원하시는<br/>
+        세그멘테이션 및 <span className={styles.gap}>GAP</span> 측정을 원하시는<br />
         부품의 사진을 넣어주세요
       </h2>
 
@@ -96,28 +96,29 @@ export default function UploadPage() {
       >
         {previewUrls.length ? (
           <div className={`${styles.previewWrapper} ${styles[`count${previewUrls.length}`]}`}>
-            {previewUrls.map((url,i) => (
-              <img key={i} src={url} alt="" className={styles.previewImage}/>
+            {previewUrls.map((url, i) => (
+              <img key={i} src={url} alt="" className={styles.previewImage} />
             ))}
           </div>
         ) : (
           <p className={styles.placeholder}>
-            원하는 파일을<br/>드래그해서 넣어주세요
+            원하는 파일을<br />드래그해서 넣어주세요
           </p>
         )}
       </div>
 
       <div className={styles.buttonRow}>
-        <label className={styles.grayButton}>
+        <label htmlFor="fileInput" className={styles.grayButton}>
           파일 선택
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            style={{ display: 'none' }}
-            onChange={handleFileChange}
-          />
         </label>
+        <input
+          id="fileInput"
+          type="file"
+          accept="image/*"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
         <button className={styles.grayButton} onClick={handleReset}>
           파일 초기화
         </button>
@@ -126,21 +127,6 @@ export default function UploadPage() {
       <button className={styles.submitButton} onClick={handleSubmit}>
         측정하기
       </button>
-
-      {result && (
-        <div className={styles.resultContainer}>
-          <div className={styles.resultSection}>
-            <h3>Segmentation</h3>
-            <img src={result.segUrl} alt="segmentation" className={styles.resultImage}/>
-          </div>
-          <div className={styles.resultSection}>
-            <h3>Gap</h3>
-            <img src={result.gapUrl} alt="gap" className={styles.resultImage}/>
-            <p>Gap 값: {result.gapValue}px</p>
-            <p>소요 시간: {result.time}s</p>
-          </div>
-        </div>
-      )}
     </div>
-);
+  );
 }
