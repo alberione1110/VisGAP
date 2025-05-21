@@ -21,6 +21,7 @@ app.add_middleware(
     allow_origins=['*'],
     allow_methods=['*'],
     allow_headers=['*'],
+    expose_headers=['X-Processing-Time'],
 )
 
 # 결과 이미지 제공을 위한 static 폴더 마운트
