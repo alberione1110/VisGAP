@@ -66,7 +66,7 @@ def process_image_bytes(image_bytes: bytes, conf: float = 0.1, iou: float = 0.3)
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2
                 )
 
-    # 5) PNG 바이트로 인코딩
+    # 5) PNG 바이트로 인코딩 
     _, seg_buf = cv2.imencode(".png", seg_overlay)
     _, gap_buf = cv2.imencode(".png", gap_view)
 

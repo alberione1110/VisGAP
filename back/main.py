@@ -15,7 +15,7 @@ from ai_utils import process_image_bytes
 
 app = FastAPI()
 
-# CORS 설정 (개발환경: 모든 오리진 허용)
+# CORS 설정 (개발환경: 모든 오리진 허용) 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
