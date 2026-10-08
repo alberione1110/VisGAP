@@ -91,7 +91,7 @@ flowchart LR
 
 ## 실행 방법
 
-학습된 가중치가 공개되지 않으므로, 직접 학습한 YOLO 가중치를 `runs/detect/train63/weights/best.pt` 위치에 두어야 동작합니다.
+서비스에 쓰는 학습 가중치는 `runs/detect/train63/weights/best.pt`에 포함되어 있습니다.
 
 ```bash
 git clone https://github.com/alberione1110/VisGAP.git
